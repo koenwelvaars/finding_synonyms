@@ -1,6 +1,6 @@
 ![alt text](https://i.imgflip.com/1ye64z.jpg)
 
-# Synoniemen zoeken m.b.v. text mining
+# Synoniemen zoeken met text mining
 Deze repository is opgezet om een ieder op weg te helpen die gebruik wil maken van machine learning middels programmeertaal R. 
 De synoniemenzoeker is een onderdeel van een text mining project om complicaties uit medische teksten te ontsluiten. Bij het zoeken naar complicaties
 wil je dat alle mogelijke benamingen voor de complicatie meegenomen worden. Binnen medische documentatie is er nogal veel praktijkvariatie, waardoor artsen
