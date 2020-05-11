@@ -14,7 +14,7 @@ Hoewel dit een onderdeel van test mining project voor complicatie detectie, is h
 wat je zoekt en hoe text mining omgaat met het berekenen van context (Word2Vec technieken) uit verschillende teksten.
 
 Je kan de code hier terugvinden:
-- [Synoniemenzoeker](https://github.com/koenwelvaars/machine-learning-voorbeelden/blob/master/Inladen%20van%20alle%20benodigde%20packages%20en%20data)
+- [Synoniemenzoeker](https://github.com/koenwelvaars/synoniemenzoeker/blob/master/code)
 
 Mocht je vragen of suggesties hebben over de code of  ideeën voor een volgende post, neem gerust contact met mij op via k.welvaars@olvg.nl
 In de toekomst zal ik meer R-code delen, zodat dit door een ieder te gebruiken is voor zijn/haar machine learning projecten.
