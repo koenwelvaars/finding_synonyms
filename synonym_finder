@@ -1,6 +1,6 @@
-# Benodigde pakketten installeren
+# Install needed libs
 
-pakFunctie <- function(pkg){ 
+pakFunction <- function(pkg){ 
   new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])] 
   if (length(new.pkg))  
     install.packages(new.pkg, dependencies = TRUE) 
@@ -9,21 +9,21 @@ pakFunctie <- function(pkg){
 
 packages <- c("readxl", "tm", "dplyr", "ggplot2", "tidytext", "wordcloud", "RColorBrewer", 
               "stringr", "keras", "tensorflow", "xlsx", "widyr", "irlba", "broom") 
-pakFunctie(packages)
+pakFunction(packages)
 
-# Data laden
+# Load data
 setwd("...")
 getwd()
 
 df <- read_excel("...")
 df <- df %>%
-  select(c("...")) # Vul hier je kolom in waar de vrije tekst/documentatie in staat
+  select(c("...")) # This will be the column containing the raw text
 
-# Aanmaken van ID per woord
+# Create ID for each word
 set.seed(84)
 df$ID <- row.names(df)
 
-# Context window van 8 woorden
+# Context window of 8 words
 tidy_skipgrams <- df %>%
   unnest_tokens(ngram, Text, token = "ngrams", n = 8) %>%
   mutate(ngramID = row_number()) %>% 
@@ -32,26 +32,7 @@ tidy_skipgrams <- df %>%
 
 tidy_skipgrams
 
-# verwijderen van Nederlandse stopwoorden
-# inladen van Nederlandse stopwoorden lijst: https://eikhart.com/blog/dutch-stopwords-list
-
-stopwoorden <- read_excel("stopwoorden.xlsx")
-stopwoorden <- as.character(stopwoorden$a)
-stopwoorden <- tibble(word = stopwoorden)
-
-# Gebruiken van functie anti_join om alle stopwoorden te verwijderen obv onze lijst
-tidy_skipgrams <- tidy_skipgrams %>% 
-  anti_join(stopwoorden, by = "word")
-
-# Optioneel: verwijderen van woorden korter dan 5 tekens (zoals doseringen als "mg")
-korte_woorden <- tidy_skipgrams %>% 
-  select(word) %>% 
-  filter(str_length(word) < 5)
-
-tidy_skipgrams <- tidy_skipgrams %>% 
-  anti_join(korte_woorden, by = "word")
-
-# Berekenen van unigram waarschijnlijkheid (unigram is de mate waarin woorden met elkaar voorkomen)
+# Calculate unigram probability (measure of single word co-occurances)
 
 unigram_probs <- df %>%
   unnest_tokens(word, Text) %>%
@@ -60,7 +41,7 @@ unigram_probs <- df %>%
 
 unigram_probs
 
-# Berekenen van waarschijnlijkheid van samen voorkomen
+# Calculate skipgram probability (measure of multiple word co-occurances)
 skipgram_probs <- tidy_skipgrams %>%
   pairwise_count(word, skipgramID, diag = TRUE, sort = TRUE) %>%
   mutate(p = n / sum(n))
@@ -68,7 +49,7 @@ skipgram_probs <- tidy_skipgrams %>%
 skipgram_probs
 
 
-# Normaliseren waarschijnlijkheid
+# Normalize probability
 normalized_prob <- skipgram_probs %>%
   filter(n > 20) %>%
   rename(word1 = item1, word2 = item2) %>%
@@ -83,27 +64,27 @@ normalized_prob <- skipgram_probs %>%
 normalized_prob
 
 normalized_prob %>% 
-  filter(word1 == "...") %>% # Vul hier het woord in waar je naar op zoek bent!
+  filter(word1 == "...") %>% # Insert the word you're trying to find the synonyms of
   arrange(-p_together)
 
 pmi_matrix <- normalized_prob %>%
   mutate(pmi = log10(p_together)) %>%
   cast_sparse(word1, word2, pmi)
 
-# Woordematrix ontwikkelen
+# Create word-matrix
 set.seed(84)
 
-# Verwijderen missing data
+# Remove missings data
 pmi_matrix@x[is.na(pmi_matrix@x)] <- 0
 
-# Woordematrix trainen
+# Train word-matrix
 pmi_svd <- irlba(pmi_matrix, 256, maxit = 500)
 
-# Woord vectors opslaan
+# Save word vectors
 word_vectors <- pmi_svd$u
 rownames(word_vectors) <- rownames(pmi_matrix)
 
-# Synoniemenzoeker voor complicaties (complicaties nog invullen)
+# Find synonyms for complications
 set.seed(84)
 
 search_synonyms <- function(word_vectors, selected_vector) {
@@ -118,30 +99,30 @@ search_synonyms <- function(word_vectors, selected_vector) {
     arrange(-similarity)    
 }
 
-pres_synonym <- search_synonyms(word_vectors,word_vectors["...",]) # Vul hier je gewenste woord in
+pres_synonym <- search_synonyms(word_vectors,word_vectors["...",]) # Insert word you're trying to find synonyms for
 pres_synonym
 
-# Plotten van woordvectors
+# Plot word-vectors
 pmi_svd <- irlba(pmi_matrix, 2, maxit = 500)
 
 word_vectors <- pmi_svd$u
 rownames(word_vectors) <- rownames(pmi_matrix)
 
-# Plot 100 woordvectors
+# Plot 100 word-vectors
 forplot<-as.data.frame(word_vectors[200:300,])
 forplot$word<-rownames(forplot)
 
-# Plot woordenwolk van 100 woordvectors zonder overlap
+# Plot word Cloud without overlap
 ggplot(forplot, aes(x=V1, y=V2, label=word))+
   geom_text(aes(label=word),hjust=0, vjust=0, color="blue",
             check_overlap = TRUE) +
   theme_minimal()+
-  xlab("Eerste dimensie van SVD")+
-  ylab("Tweede dimensie van SVD")
+  xlab("First dimension of SVD")+
+  ylab("Second dimension of SVD")
 
-# Plot top 10 woorden gevonden door de synoniemenzoeker
+# Plot top 10 words found as synonyms
 pres_synonym %>%
-  mutate(selected = "...") %>% # Woord invullen
+  mutate(selected = "...") %>% # Fill in the word you're trying to find synonyms for
   group_by(selected) %>%
   top_n(10, similarity) %>%
   ungroup %>%
@@ -152,7 +133,5 @@ pres_synonym %>%
   coord_flip() +
   theme_minimal() +
   scale_y_continuous(expand = c(0,0)) +
-  labs(x = NULL, title = "Synoniemenzoeker",
-       subtitle = "Top 10 synoniemen gebaseerd op zoekterm")
-
-
+  labs(x = NULL, title = "Finding synonyms",
+       subtitle = "Top 10 synonyms based on inserted word")
