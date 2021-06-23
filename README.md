@@ -1,23 +1,13 @@
 ![alt text](https://i.imgflip.com/1ye64z.jpg)
 
-# Synoniemen zoeken met text mining
-De synoniemenzoeker is een onderdeel van een text mining project om complicaties uit medische teksten te ontsluiten. <br /> 
+# Searching for synonyms using text mining
+This tool can be used to search clinical notes for similar words (i.e. synonyms). <br /> 
+When you are looking for specific keywords in a clinical note, there will always be a different use of words within a group op physicians. For example: when looking for the word 'delirium', some physicians use this specific word. Other physicians might use words like 'forgetful', 'breakdown', and so on. To look up all these words that look/feel like 'delirium', we will use text mining and create insight in the differences in used terminology. <br /> 
 
+This will be done using a word-matrix (Word2Vec), which calculates the probability of words that co-occur. The base assumption is that if words co-occur in a certain context, they will have a higher probability of having a similar meaning.
+This is part of a bigger project, detection of complications in clinical notes, but is a fun way to get insight in usage of terminology.
 
-Bij het zoeken naar complicaties wil je dat alle mogelijke benamingen voor de complicatie meegenomen worden. Binnen medische documentatie kom je nog wel eens praktijkvariatie in benaming tegen; artsen die met verschillende benamingen/woorden dezelfde dingen bedoelen. Denk bijvoorbeeld aan de complicatie "delier": de eerste arts noteert dit als "delier", de tweede arts
-noteert dit als "vergeetachtig", de derde arts noteert dit als "inzinking" enzovoort. <br /> 
-
-
-Met behulp van een woordenmatrix bereken je de mate van waarschijnlijkheid dat bepaalde woorden in verschillende teksten in combinatie met elkaar voorkomen. Des te meer woorden
-bij elkaar voorkomen, des te waarschijnlijker het is dat deze woorden dezelfde betekenis hebben of eenzelfde context hebben.
-Hoewel dit een onderdeel van test mining project voor complicatie detectie, is het een leuke manier om goed inzicht te krijgen in de context van het woord
-wat je zoekt en hoe text mining omgaat met het berekenen van context (Word2Vec technieken) uit verschillende teksten.
-
-Je kan de code hier terugvinden:
+Code can be found in:
 - [Synoniemenzoeker](https://github.com/koenwelvaars/synoniemenzoeker/blob/master/code)
 
-Mocht je vragen of suggesties hebben over de code of  ideeën voor een volgende post, neem gerust contact met mij op via k.welvaars@olvg.nl
-In de toekomst zal ik meer R-code delen, zodat dit door een ieder te gebruiken is voor zijn/haar machine learning projecten.
-
-
-
+Info/suggestion? Feel free to contact me via k.welvaars@olvg.nl
