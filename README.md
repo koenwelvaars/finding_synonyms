@@ -8,6 +8,6 @@ This will be done using a word-matrix (Word2Vec), which calculates the probabili
 This is part of a bigger project, detection of complications in clinical notes, but is a fun way to get insight in usage of terminology.
 
 Code can be found in:
-- [Synoniemenzoeker](https://github.com/koenwelvaars/synoniemenzoeker/blob/master/code)
+- [Finder of synonyms](https://github.com/koenwelvaars/finding_synonyms/blob/master/synonym_finder)
 
 Info/suggestion? Feel free to contact me via k.welvaars@olvg.nl
